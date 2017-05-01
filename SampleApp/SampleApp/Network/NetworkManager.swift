@@ -48,8 +48,8 @@ class NetworkManager {
                             return message
                         }
                     }
-                    let newMessage = MessageModel(id: nextMessageId(), text: "hey", sender: user)
-                    messages.append(newMessage)
+//                    let newMessage = MessageModel(id: nextMessageId(), text: "hey", sender: user)
+//                    messages.append(newMessage)
                     completion(messages, nil)
                 }
             }

@@ -9,7 +9,7 @@
 import Foundation
 import RocketData
 
-final class MessageModel: SampleAppModel, Equatable {
+final public class MessageModel: SampleAppModel, Equatable {
     let id: Int
     let text: String
     let sender: UserModel
@@ -22,7 +22,7 @@ final class MessageModel: SampleAppModel, Equatable {
 
     // MARK: - SampleAppModel
 
-    required init?(data: [AnyHashable: Any]) {
+    required public init?(data: [AnyHashable: Any]) {
         guard let id = data["id"] as? Int,
             let text = data["text"] as? String,
             let senderData = data["sender"] as? [AnyHashable: Any],
@@ -44,12 +44,13 @@ final class MessageModel: SampleAppModel, Equatable {
 
     // MARK: - Rocket Data Model
 
-    var modelIdentifier: String? {
+    public var modelIdentifier: String? {
         // We prepend UserModel to ensure this is globally unique
+        print("MessageModel:\(id)")
         return "MessageModel:\(id)"
     }
 
-    func map(_ transform: (Model) -> Model?) -> MessageModel? {
+    public func map(_ transform: (Model) -> Model?) -> MessageModel? {
         guard let newSender = transform(sender) as? UserModel else {
             // If transform returns nil, we should cascade this delete
             return nil
@@ -57,12 +58,12 @@ final class MessageModel: SampleAppModel, Equatable {
         return MessageModel(id: id, text: text, sender: newSender)
     }
 
-    func forEach(_ visit: (Model) -> Void) {
+    public func forEach(_ visit: (Model) -> Void) {
         visit(sender)
     }
 }
 
-func ==(lhs: MessageModel, rhs: MessageModel) -> Bool {
+public func ==(lhs: MessageModel, rhs: MessageModel) -> Bool {
     return lhs.id == rhs.id &&
         lhs.text == rhs.text &&
         lhs.sender == rhs.sender

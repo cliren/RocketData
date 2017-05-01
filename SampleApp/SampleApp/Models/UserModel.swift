@@ -9,7 +9,7 @@
 import Foundation
 import RocketData
 
-final class UserModel: SampleAppModel, Equatable {
+final public class UserModel: SampleAppModel, Equatable {
     let id: Int
     let name: String
     let online: Bool
@@ -22,7 +22,7 @@ final class UserModel: SampleAppModel, Equatable {
 
     // MARK: - SampleAppModel
 
-    required init?(data: [AnyHashable: Any]) {
+    required public init?(data: [AnyHashable: Any]) {
         guard let id = data["id"] as? Int,
             let name = data["name"] as? String,
             let online = data["online"] as? Bool else {
@@ -43,21 +43,21 @@ final class UserModel: SampleAppModel, Equatable {
 
     // MARK: - Rocket Data Model
 
-    var modelIdentifier: String? {
+    public var modelIdentifier: String? {
         // We prepend UserModel to ensure this is globally unique
         return "UserModel:\(id)"
     }
 
-    func map(_ transform: (Model) -> Model?) -> UserModel? {
+    public func map(_ transform: (Model) -> Model?) -> UserModel? {
         // No child objects, so we can just return self
         return self
     }
 
-    func forEach(_ visit: (Model) -> Void) {
+    public func forEach(_ visit: (Model) -> Void) {
     }
 }
 
-func ==(lhs: UserModel, rhs: UserModel) -> Bool {
+public func ==(lhs: UserModel, rhs: UserModel) -> Bool {
     return lhs.id == rhs.id &&
         lhs.name == rhs.name &&
         lhs.online == rhs.online

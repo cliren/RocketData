@@ -7,112 +7,108 @@
 //
 
 import UIKit
+import Foundation
 import RocketData
 
 /**
  This view controller displays a list of messages between the current user and another user.
  It has a button to say "hey" to the other user. The only thing you can do in chats is say "hey".
  */
-class MessagesViewController: UIViewController, CollectionDataProviderDelegate, DataProviderDelegate, UITableViewDataSource, UITableViewDelegate {
 
-    /// This data provider is for the other user. We only use this to display the title of the view controller.
-    fileprivate let userDataProvider = DataProvider<UserModel>()
-    /// This data provider is for all the messages in our table view.
-    fileprivate let dataProvider = CollectionDataProvider<MessageModel>()
+class MessagesViewController: UIViewController, StoreSubscriber, UITableViewDataSource, UITableViewDelegate {
 
-    /// This is the cache key we use for the CollectionDataProvider. It's generated based on the other user's id.
-    fileprivate let cacheKey: String
+  var identifier = generateSubscriberIdentifier()
+  let messageDataController = MessageDataController()
 
-    // MARK: - IBOutlets
+  /// This is the cache key we use for the CollectionDataProvider. It's generated based on the other user's id.
+  fileprivate let cacheKey: String
 
-    @IBOutlet weak var tableView: UITableView!
+  // MARK: - IBOutlets
 
-    // MARK: - View Lifecycle
+  @IBOutlet weak var tableView: UITableView!
 
-    init(otherUser: UserModel) {
-        cacheKey = CollectionCacheKey.messages(otherUser.id).cacheKey()
+  // MARK: - View Lifecycle
 
-        super.init(nibName: "MessagesViewController", bundle: nil)
+  deinit {
+    print("unsubscribe store from MessagesViewController")
+    messageDataController.unsubscribe(listener: self)
+  }
 
-        userDataProvider.delegate = self
-        dataProvider.delegate = self
+  init(user: UserModel) {
+    cacheKey = CollectionCacheKey.messages(user.id).cacheKey()
 
-        userDataProvider.setData(otherUser)
+    messageDataController.setCurrentUser(user: user)
+    super.init(nibName: "MessagesViewController", bundle: nil)
+
+    messageDataController.subscribe(listener: self)
+  }
+
+  required init?(coder aDecoder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
+  func hasUpdatedData() {
+    print("Updating Messages")
+    self.tableView.reloadData()
+    if let loggedInUser = messageDataController.currentUser() {
+      let messages = messageDataController.messages(forUser: loggedInUser)
+      title = "Chat with \(loggedInUser.name) (\(messages.count)) "
     }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+  }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+  override func viewDidLoad() {
+    super.viewDidLoad()
 
-        if let user = userDataProvider.data {
-            title = "Chat with \(user.name)"
-        }
-
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-
-        // We're going to do two things in parallel - access the cache and the network.
-        // RocketData ensures there is no race condition here. If the cache returns after the network, the cache result is automatically discarded.
-        dataProvider.fetchDataFromCache(withCacheKey: cacheKey) { (_, _) in
-            self.tableView.reloadData()
-        }
-
-        if let user = userDataProvider.data {
-            NetworkManager.fetchMessage(user) { (models, error) in
-                if error == nil {
-                    self.dataProvider.setData(models, cacheKey: self.cacheKey)
-                    self.tableView.reloadData()
-                }
-            }
-        }
+    if let user = messageDataController.currentUser() {
+      title = "Chat with \(user.name)"
     }
 
-    // MARK: - Actions
+    tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
 
-    @IBAction func heyButtonPressed() {
-        // Here is where you'd send an actualy network request. But we're just going to create a message model locally.
-        let loggedInUser = NetworkManager.loggedInUser()
-        let newMessageId = NetworkManager.nextMessageId()
-        let message = MessageModel(id: newMessageId, text: "hey", sender: loggedInUser)
-        dataProvider.append([message])
+    messageDataController.perform(action: FetchMessagesAction(cacheKey: cacheKey))
 
-        tableView.reloadData()
+  }
+
+  func getMessages() -> [MessageModel] {
+    if let loggedInUser = messageDataController.currentUser() {
+      let messages = messageDataController.messages(forUser: loggedInUser)
+      return messages
+    } else {
+      return []
+    }
+  }
+
+  // MARK: - Actions
+
+  @IBAction func heyButtonPressed() {
+    // Here is where you'd send an actualy network request. But we're just going to create a message model locally.
+    if let loggedInUser = messageDataController.currentUser() {
+      let newMessageId = NetworkManager.nextMessageId()
+      let message = MessageModel(id: newMessageId, text: "hey \( NSUUID().uuidString)", sender: loggedInUser)
+
+      messageDataController.perform(action: SendMessageAction(message: message))
     }
 
-    // MARK: - TableView
+  }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataProvider.count
+  // MARK: - TableView
+
+  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    return getMessages().count
+  }
+
+
+  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+
+    let messages = getMessages()
+    let message = messages[indexPath.row]
+    var text = message.sender.name
+    if !message.sender.online {
+      text += " (Offline)"
     }
-
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-
-        let message = dataProvider[indexPath.row]
-        var text = message.sender.name
-        if !message.sender.online {
-            text += " (Offline)"
-        }
-        text += ": \(dataProvider[indexPath.row].text)"
-        cell.textLabel?.text = text
-        return cell
-    }
-
-    // MARK: - DataProviderDelegates
-
-    func dataProviderHasUpdatedData<T>(_ dataProvider: DataProvider<T>, context: Any?) {
-        // Since we only use this model to set the title, it's the only UI we need to update.
-        if let user = userDataProvider.data {
-            title = "Chat with \(user.name)"
-        }
-    }
-
-    func collectionDataProviderHasUpdatedData<T>(_ dataProvider: CollectionDataProvider<T>, collectionChanges: CollectionChange, context: Any?) {
-        // This will be called whenever one of the models changes. In our case, this happens whenever someone comes online/offline.
-        // Optional: Use collectionChanges to do tableview animations
-        self.tableView.reloadData()
-    }
+    text += ": \(message.text)"
+    cell.textLabel?.text = text
+    return cell
+  }
 }

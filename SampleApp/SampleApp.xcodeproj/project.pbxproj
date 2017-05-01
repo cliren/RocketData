@@ -22,6 +22,11 @@
 		61EB34B51D4BAC5C00EACC17 /* MessagesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 61EB34AB1D4BAC5C00EACC17 /* MessagesViewController.xib */; };
 		61EB34B71D4BAC7500EACC17 /* CollectionCacheKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EB34B61D4BAC7500EACC17 /* CollectionCacheKey.swift */; };
 		7D3B1884B032A1B2D615A0C5 /* Pods_SampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B258B428B31C77DB3525D1F4 /* Pods_SampleApp.framework */; };
+		9189A2347A98169E2AA7C7AD /* StoreSubscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9189ADB73247D81EC16A656A /* StoreSubscriber.swift */; };
+		9189A954A885B6C5F07A5FFA /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9189A24E11FDBB1B0F5C8486 /* DataController.swift */; };
+		9189AB3CF2914462370493AD /* ChatDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9189A69349D104FAE1B93B27 /* ChatDataController.swift */; };
+		9189AC3033E39672C1F31531 /* MessageDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9189A9B3595FFC31AB830C10 /* MessageDataController.swift */; };
+		9189AF581464E291FD380D7B /* Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9189A368FA5CC517D19FF38B /* Actions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +48,11 @@
 		61EB34AB1D4BAC5C00EACC17 /* MessagesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessagesViewController.xib; sourceTree = "<group>"; };
 		61EB34B61D4BAC7500EACC17 /* CollectionCacheKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionCacheKey.swift; sourceTree = "<group>"; };
 		6475889A5DCB2DF0B7BD9C5C /* Pods-SampleApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-SampleApp/Pods-SampleApp.release.xcconfig"; sourceTree = "<group>"; };
+		9189A24E11FDBB1B0F5C8486 /* DataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+		9189A368FA5CC517D19FF38B /* Actions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Actions.swift; sourceTree = "<group>"; };
+		9189A69349D104FAE1B93B27 /* ChatDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatDataController.swift; sourceTree = "<group>"; };
+		9189A9B3595FFC31AB830C10 /* MessageDataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageDataController.swift; sourceTree = "<group>"; };
+		9189ADB73247D81EC16A656A /* StoreSubscriber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreSubscriber.swift; sourceTree = "<group>"; };
 		B258B428B31C77DB3525D1F4 /* Pods_SampleApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SampleApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -87,6 +97,7 @@
 				61C795AD1D428D1100631563 /* Assets.xcassets */,
 				61C795AF1D428D1100631563 /* LaunchScreen.storyboard */,
 				61C795B21D428D1100631563 /* Info.plist */,
+				9189A5F72772A57C73BA447E /* Pattern */,
 			);
 			path = SampleApp;
 			sourceTree = "<group>";
@@ -137,6 +148,18 @@
 				6475889A5DCB2DF0B7BD9C5C /* Pods-SampleApp.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		9189A5F72772A57C73BA447E /* Pattern */ = {
+			isa = PBXGroup;
+			children = (
+				9189ADB73247D81EC16A656A /* StoreSubscriber.swift */,
+				9189A368FA5CC517D19FF38B /* Actions.swift */,
+				9189A69349D104FAE1B93B27 /* ChatDataController.swift */,
+				9189A9B3595FFC31AB830C10 /* MessageDataController.swift */,
+				9189A24E11FDBB1B0F5C8486 /* DataController.swift */,
+			);
+			path = Pattern;
 			sourceTree = "<group>";
 		};
 		D1B6923117DF6949B0F8F730 /* Frameworks */ = {
@@ -281,6 +304,11 @@
 				61C795A71D428D1100631563 /* AppDelegate.swift in Sources */,
 				61EB34AF1D4BAC5C00EACC17 /* NetworkManager.swift in Sources */,
 				61C795C31D42918600631563 /* SampleAppModel.swift in Sources */,
+				9189A2347A98169E2AA7C7AD /* StoreSubscriber.swift in Sources */,
+				9189AF581464E291FD380D7B /* Actions.swift in Sources */,
+				9189AB3CF2914462370493AD /* ChatDataController.swift in Sources */,
+				9189AC3033E39672C1F31531 /* MessageDataController.swift in Sources */,
+				9189A954A885B6C5F07A5FFA /* DataController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
